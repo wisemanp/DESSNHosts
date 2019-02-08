@@ -179,7 +179,7 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
     for_cigale = for_cigale[['id','redshift','decam_g','decam_r','decam_i','decam_z',
                              'decam_g_err','decam_r_err','decam_i_err','decam_z_err']]
 
-    for_cigale.to_csv('/media/data3/wiseman/des/cigale/cigale-v2018.0/pcigale/%s.dat'%os.path.split(sn_name_fn)[-1].split('.')[0]+dered_suffix,sep=' ',index=False)
+    for_cigale.to_csv('/media/data3/wiseman/des/cigale/cigale-v2018.0/pcigale/%s.dat'%(os.path.split(sn_name_fn)[-1].split('.')[0]+dered_suffix),sep=' ',index=False)
 
 def cigale_config(data_fn):
     from configobj import ConfigObj
