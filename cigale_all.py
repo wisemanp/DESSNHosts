@@ -34,7 +34,7 @@ def main():
         if args.dered:
             dered_suffix='_dered'
         cigale_config('%s.dat'%os.path.split(args.namelist)[-1].split('.')[0]+dered_suffix)
-        run_cigale(os.path.split(args.namelist)[-1].split('.')[0])
+        run_cigale(os.path.split(args.namelist)[-1].split('.')[0]+dered_suffix)
     print ('Done!')
 
 if __name__=="__main__":
