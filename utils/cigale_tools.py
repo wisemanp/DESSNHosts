@@ -33,7 +33,7 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
     for i in df.index:
         if df['SPECZ'].loc[i]>0:
             mclass = miika_class[miika_class['TRANSIENT_NAME']==df['TRANSIENT_NAME'].loc[i]]
-            
+
             if mclass['Est'].values ==1:
                 sn_app_g.append(df['MAG_AUTO_G'].loc[i])
                 sn_app_r.append(df['MAG_AUTO_R'].loc[i])
@@ -60,7 +60,7 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
             lh.set_alpha(1)
         xs = np.linspace(-26,-18,100)
         ys = -0.375*xs -7.7
-        ax.plot(xs,ys,'-k')                   
+        ax.plot(xs,ys,'-k')
         ax.invert_xaxis()
         ax.set_xlabel('$M_r$',size=18)
         ax.set_ylabel('$g - r$',size=18)
@@ -76,7 +76,7 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
             lh.set_alpha(1)
         xs = np.linspace(-26,-18,100)
         ys = -0.375*xs -7.7
-        ax2.plot(xs,ys,'-k')                   
+        ax2.plot(xs,ys,'-k')
         ax2.invert_xaxis()
         ax2.set_xlabel('$M_r$',size=18)
         ax2.set_ylabel('$g - r$',size=18)
@@ -92,7 +92,7 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
             lh.set_alpha(1)
         xs = np.linspace(-26,-18,100)
         ys = -0.375*xs -7.7
-        ax3.plot(xs,ys,'-k')                   
+        ax3.plot(xs,ys,'-k')
         ax3.invert_xaxis()
         ax3.set_xlabel('$M_r$',size=18)
         ax3.set_ylabel('$g - r$',size=18)
@@ -102,14 +102,14 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
     galaxies = []
     for counter,mag in enumerate(sn_abs_r):
         col = sn_app_g[counter]-sn_app_r[counter]
-        
-        
+
+
         if col<-0.375*mag -7.7:
             pass
-        else: 
+        else:
             galaxies.append(sn_names[counter])
     return galaxies
-    
+
 
 def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/source_lists/all_transients.txt',dered=True,ml=False):
     if os.path.isfile(sn_name_fn):
@@ -151,21 +151,21 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
             allgals['MAG_AUTO_%s'%b.capitalize()] -= vals_dict[b]
 
     for b in bands:
-        allgals['FLUX_AUTO_uJy_%s'%b] = ''
-        allgals['FLUX_AUTO_uJy_%s'%b] = ''
-        allgals['FLUX_AUTO_uJy_%s'%b] =(10**3)*10**(23-(allgals['MAG_AUTO_%s'%b.capitalize()]+48.6)/2.5)
-        allgals['FLUXERR_AUTO_uJy_%s'%b] =2.303*allgals['FLUX_AUTO_uJy_%s'%b].values*allgals['MAGERR_AUTO_%s'%b.capitalize()].values
+        allgals['FLUX_AUTO_mJy_%s'%b] = ''
+        allgals['FLUX_AUTO_mJy_%s'%b] = ''
+        allgals['FLUX_AUTO_mJy_%s'%b] =(10**3)*10**(23-(allgals['MAG_AUTO_%s'%b.capitalize()]+48.6)/2.5)
+        allgals['FLUXERR_AUTO_mJy_%s'%b] =2.303*allgals['FLUX_AUTO_mJy_%s'%b].values*allgals['MAGERR_AUTO_%s'%b.capitalize()].values
 
     for_cigale = allgals.rename(columns={'TRANSIENT_NAME':'id',
                                          'SPECZ':'redshift',
-                                         'FLUX_AUTO_uJy_g':'decam_g',
-                                         'FLUX_AUTO_uJy_r':'decam_r',
-                                         'FLUX_AUTO_uJy_i':'decam_i',
-                                         'FLUX_AUTO_uJy_z':'decam_z',
-                                         'FLUXERR_AUTO_uJy_g':'decam_g_err',
-                                         'FLUXERR_AUTO_uJy_r':'decam_r_err',
-                                         'FLUXERR_AUTO_uJy_i':'decam_i_err',
-                                         'FLUXERR_AUTO_uJy_z':'decam_z_err'
+                                         'FLUX_AUTO_mJy_g':'decam_g',
+                                         'FLUX_AUTO_mJy_r':'decam_r',
+                                         'FLUX_AUTO_mJy_i':'decam_i',
+                                         'FLUX_AUTO_mJy_z':'decam_z',
+                                         'FLUXERR_AUTO_mJy_g':'decam_g_err',
+                                         'FLUXERR_AUTO_mJy_r':'decam_r_err',
+                                         'FLUXERR_AUTO_mJy_i':'decam_i_err',
+                                         'FLUXERR_AUTO_mJy_z':'decam_z_err'
                                        })
 
     for_cigale = for_cigale[['id','redshift','decam_g','decam_r','decam_i','decam_z',
@@ -192,4 +192,3 @@ def run_cigale(outdir):
     copyfile('/media/data3/wiseman/des/cigale/cigale-v2018.0/pcigale/out/results.fits',
               '/media/data3/wiseman/des/cigale/cigale-v2018.0/pcigale/%s/results.fits'%outdir)
     copyfile('/media/data3/wiseman/des/cigale/cigale-v2018.0/pcigale/%s.dat'%outdir,'/media/data3/wiseman/des/cigale/cigale-v2018.0/pcigale/%s/cig_in.dat'%outdir)
-
