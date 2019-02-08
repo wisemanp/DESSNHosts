@@ -14,7 +14,7 @@ def main():
     args = parser()
 
     cigale_config(args.fname)
-    run_cigale(args.fname.split(',')[0])
+    run_cigale(args.fname.split('.')[0])
     print ('Done!')
 
 if __name__=="__main__":
