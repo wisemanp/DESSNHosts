@@ -129,11 +129,19 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
     else:
         allgals = dlr1s[dlr1s['SPECZ']>0]
     allgals = allgals[['TRANSIENT_NAME','SPECZ','Y_IMAGE',
-                  'RA','DEC',
-                  'MAG_AUTO_G','MAGERR_AUTO_G',
+                       'RA','DEC',
+                       'MAG_AUTO_G','MAGERR_AUTO_G',
                        'MAG_AUTO_R','MAGERR_AUTO_R',
                        'MAG_AUTO_I','MAGERR_AUTO_I',
-                       'MAG_AUTO_Z','MAGERR_AUTO_Z']]
+                       'MAG_AUTO_Z','MAGERR_AUTO_Z',
+                       'FLUX_AUTO_G','FLUXERR_AUTO_G',
+                       'FLUX_AUTO_R','FLUXERR_AUTO_R',
+                       'FLUX_AUTO_I','FLUXERR_AUTO_I',
+                       'FLUX_AUTO_Z','FLUXERR_AUTO_Z',
+                       'MAG_ZEROPOINT_G','MAG_ZEROPOINT_ERR_G',
+                       'MAG_ZEROPOINT_R','MAG_ZEROPOINT_ERR_R',
+                       'MAG_ZEROPOINT_I','MAG_ZEROPOINT_ERR_I',
+                       'MAG_ZEROPOINT_Z','MAG_ZEROPOINT_ERR_Z']]
     print ('Going to work on %s galaxies!'%len(allgals))
     dered_suffix=''
     if dered==True:
