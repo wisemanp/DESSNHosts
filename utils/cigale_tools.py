@@ -153,9 +153,9 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
     for b in bands:
         allgals['FLUX_AUTO_mJy_%s'%b] = ''
         allgals['FLUX_AUTO_mJy_%s'%b] = ''
-        allgals['FLUX_AUTO_mJy_%s'%b] =(10**3)*10**(23-(allgals['MAG_AUTO_%s'%b.capitalize()]+48.6)/2.5)
-        allgals['FLUXERR_AUTO_mJy_%s'%b] =2.303*allgals['FLUX_AUTO_mJy_%s'%b].values*allgals['MAGERR_AUTO_%s'%b.capitalize()].values
-
+        allgals['FLUX_AUTO_mJy_%s'%b] =(10**3)*10**(3.56-(allgals['MAG_ZEROPOINT_%s'%b.capitalize()]/2.5))*allgals['FLUX_AUTO_%s'%b.capitalize()]
+        allgals['FLUXERR_AUTO_mJy_%s'%b] = allgals['FLUX_AUTO_mJy_%s'%b].values*((2.303*allgals['MAG_ZEROPOINT_ERR_%s'%b.capitalize()]/2.5)**2 +\
+    (allgals['FLUXERR_AUTO_%s'%b.capitalize()]/allgals['FLUX_AUTO_%s'%b.capitalize()])**2)**0.5
     for_cigale = allgals.rename(columns={'TRANSIENT_NAME':'id',
                                          'SPECZ':'redshift',
                                          'FLUX_AUTO_mJy_g':'decam_g',
