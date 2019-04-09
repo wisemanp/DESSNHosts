@@ -149,10 +149,10 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
                         done=True
                         break
     if fz:
-        force_redshifts = np.loadtxt(fz)
+        force_redshifts = np.loadtxt(fz,dtype='str')
         for counter,sn in enumerate(force_redshifts[:,0]):
             snloc = dlr1s[dlr1s['TRANSIENT_NAME']==sn]
-            dlr1s['SPECZ'].loc[snloc] = force_redshifts[counter,1]
+            dlr1s['SPECZ'].loc[snloc] = float(force_redshifts[counter,1])
             print ('Forced z of %s for %s as requested'%(force_redshifts[counter,1],sn))
     if ml ==True:
         miika_class = pd.read_csv('f/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_plot_final.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Est','Per 0','Per 1'])
