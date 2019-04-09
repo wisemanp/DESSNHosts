@@ -152,7 +152,8 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
         force_redshifts = np.loadtxt(fz,dtype='str')
         print (force_redshifts)
         for counter,sn in enumerate(force_redshifts[:,0]):
-            snloc = dlr1s[dlr1s['TRANSIENT_NAME']==sn]
+            print(counter, sn)
+            snloc = dlr1s[dlr1s['TRANSIENT_NAME']==sn].index
             dlr1s['SPECZ'].loc[snloc] = float(force_redshifts[counter,1])
             print ('Forced z of %s for %s as requested'%(force_redshifts[counter,1],sn))
     if ml ==True:
@@ -181,6 +182,7 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
                        'MAG_ZEROPOINT_I','MAG_ZEROPOINT_ERR_I',
                        'MAG_ZEROPOINT_Z','MAG_ZEROPOINT_ERR_Z']]
     print ('Going to work on %s galaxies!'%len(allgals))
+    print (allgals[['TRANSIENT_NAME','SPECZ']])
     dered_suffix=''
     if dered==True:
         dered_suffix='_dered'
