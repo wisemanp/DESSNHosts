@@ -112,19 +112,50 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
 
 
 def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/source_lists/all_transients.txt',dered=True,ml=False):
+    print ('sn_name_fn',sn_name_fn)
     if os.path.isfile(sn_name_fn):
         sn_names = np.genfromtxt(sn_name_fn,dtype=str,delimiter='\n')
         name_df = pd.DataFrame(sn_names,columns=['TRANSIENT_NAME'])
-    latest = pd.read_csv('/media/data3/wiseman/des/coadding/results/sngals_deep_v2.csv')
+    print (name_df)
+    latest = pd.read_csv('/media/data3/wiseman/des/coadding/results/sngals_deep_v4.csv')
     latest.reset_index(inplace=True,drop=True)
-    latest = latest.merge(name_df,on='TRANSIENT_NAME')
+    print(latest.head(10))
+    latest = latest.merge(name_df,on='TRANSIENT_NAME',how='inner')
     dlr1s = latest[(latest['DLR_RANK']==1)|(latest['DLR_RANK']==-1)]
+    #add redshifts from SNSPECT
+    snspect = pd.read_csv('/media/data3/wiseman/des/coadding/catalogs/snspect.csv',index_col=0)
+    for i in range(len(dlr1s)):
+        if dlr1s['SPECZ'].iloc[i]>0:
+            pass
+        else:
+
+            sn = dlr1s.iloc[i]['TRANSIENT_NAME']
+            spec_obs = snspect[snspect['TRANSIENT_NAME']==sn]
+            done=False
+            for z in spec_obs['Z_GAL'].values:
+                if z>0:
+                    dlr1s['SPECZ'].iloc[i] = z
+                    print (dlr1s['TRANSIENT_NAME'].iloc[i])
+                    print ('Added z of %s from GAL to %s'%(z,sn))
+                    done=True
+                    break
+                done = False
+            if done == False:
+                for z in spec_obs['Z_SN'].values:
+                    if z >0:
+                        dlr1s['SPECZ'].iloc[i] = z
+                        print (dlr1s['TRANSIENT_NAME'].iloc[i])
+                        print ('Added z of %s from SN to %s'%(z,sn))
+                        done=True
+                        break
     if ml ==True:
-        miika_class = pd.read_csv('/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_plot_final.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Est','Per 0','Per 1'])
+        miika_class = pd.read_csv('f/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_plot_final.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Est','Per 0','Per 1'])
         miika_testset = pd.read_csv('/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_train-and-test.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Typ','Est','Per 0','Per 1'])
         miika_class = miika_class.append(miika_testset)
         galaxies = plot_host_cmd(dlr1s,miika_class,plot=False)
         galdf = pd.DataFrame(galaxies,columns=['TRANSIENT_NAME'])
+        
+
         allgals = dlr1s[dlr1s['SPECZ']>0].merge(galdf,on='TRANSIENT_NAME',how='inner')
     else:
         allgals = dlr1s[dlr1s['SPECZ']>0]
