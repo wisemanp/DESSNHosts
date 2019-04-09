@@ -150,6 +150,7 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
                         break
     if fz:
         force_redshifts = np.loadtxt(fz,dtype='str')
+        print (force_redshifts)
         for counter,sn in enumerate(force_redshifts[:,0]):
             snloc = dlr1s[dlr1s['TRANSIENT_NAME']==sn]
             dlr1s['SPECZ'].loc[snloc] = float(force_redshifts[counter,1])
