@@ -25,11 +25,12 @@ def parser():
     parser.add_argument('-ci','--docig',help='Do Cigale run?',action='store_true')
     parser.add_argument('-ml','--ml',help ='Do ML-based cut?',action='store_true')
     parser.add_argument('-fz','--fz',help='File to manually force redshifts',default=None)
+    parser.add_argument('-lr','--lr',help='Allow large radius hosts?',action='store_true')
     return parser.parse_args()
 
 def main():
     args = parser()
-    prep_cigale_data(sn_name_fn = args.namelist,dered=args.dered,ml=args.ml,fz=args.fz)
+    prep_cigale_data(sn_name_fn = args.namelist,dered=args.dered,ml=args.ml,fz=args.fz,lr=args.lr)
     if args.docig:
         dered_suffix=''
         if args.dered:

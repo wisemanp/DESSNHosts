@@ -111,7 +111,7 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
     return galaxies
 
 
-def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/source_lists/all_transients.txt',dered=True,ml=False,fz = None):
+def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/source_lists/all_transients.txt',dered=True,ml=False,fz = None,lr=False):
     print ('sn_name_fn',sn_name_fn)
     if os.path.isfile(sn_name_fn):
         sn_names = np.genfromtxt(sn_name_fn,dtype=str,delimiter='\n')
@@ -121,7 +121,10 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
     latest.reset_index(inplace=True,drop=True)
     print(latest.head(10))
     latest = latest.merge(name_df,on='TRANSIENT_NAME',how='inner')
-    dlr1s = latest[(latest['DLR_RANK']==1)|(latest['DLR_RANK']==-1)]
+    if lr:
+        dlr1s = latest[(latest['DLR_RANK']==1)|(latest['DLR_RANK']==-1)]
+    else:
+        dlr1s = latest[latest['DLR_RANK']==1]
     #add redshifts from SNSPECT
     snspect = pd.read_csv('/media/data3/wiseman/des/coadding/catalogs/snspect.csv',index_col=0)
     for i in range(len(dlr1s)):
