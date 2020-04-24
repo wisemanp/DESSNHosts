@@ -30,6 +30,7 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
     agn_app_g,agn_app_r= [],[]
     agn_abs_g,agn_abs_r = [],[]
     agn_zs=[]
+    df['SPECZ'] = df['SPECZ'].astype(float)
     for i in df.index:
         if df['SPECZ'].loc[i]>0:
             mclass = miika_class[miika_class['TRANSIENT_NAME']==df['TRANSIENT_NAME'].loc[i]]
@@ -114,53 +115,22 @@ def plot_host_cmd(df, miika_class,msize=1,alpha=0.1,plot=True):
 def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/source_lists/all_transients.txt',dered=True,ml=False,fz = None,lr=False):
     print ('sn_name_fn',sn_name_fn)
     if os.path.isfile(sn_name_fn):
-        sn_names = np.genfromtxt(sn_name_fn,dtype=str,delimiter='\n')
-        name_df = pd.DataFrame(sn_names,columns=['TRANSIENT_NAME'])
-    print (name_df)
-    latest = pd.read_csv('/media/data3/wiseman/des/coadding/results/sngals_deep_v4.csv')
+        sn_names = np.genfromtxt(sn_name_fn,dtype=int,delimiter='\n')
+        name_df = pd.DataFrame(sn_names,columns=['SNID'])
+    
+    latest = pd.read_csv('/media/data3/wiseman/des/coadding/results/deep/sngals_deep_v7.csv')
     latest.reset_index(inplace=True,drop=True)
     print(latest.head(10))
-    latest = latest.merge(name_df,on='TRANSIENT_NAME',how='inner')
+    latest = latest.merge(name_df,on='SNID',how='inner')
     if lr:
-        dlr1s = latest[(latest['DLR_RANK']==1)|(latest['DLR_RANK']==-1)]
+        dlr1s = latest[((latest['DLR_RANK']==1)|(latest['DLR_RANK']==-1))&(latest['Z_RANK']==1)]
     else:
-        dlr1s = latest[latest['DLR_RANK']==1]
+        dlr1s = latest[(latest['DLR_RANK']==1)&(latest['Z_RANK']==1)]
     #add redshifts from SNSPECT
-    snspect = pd.read_csv('/media/data3/wiseman/des/coadding/catalogs/snspect.csv',index_col=0)
-    for i in range(len(dlr1s)):
-        if dlr1s['SPECZ'].iloc[i]>0:
-            pass
-        else:
-
-            sn = dlr1s.iloc[i]['TRANSIENT_NAME']
-            spec_obs = snspect[snspect['TRANSIENT_NAME']==sn]
-            done=False
-            for z in spec_obs['Z_GAL'].values:
-                if z>0:
-                    dlr1s['SPECZ'].iloc[i] = z
-                    print (dlr1s['TRANSIENT_NAME'].iloc[i])
-                    print ('Added z of %s from GAL to %s'%(z,sn))
-                    done=True
-                    break
-                done = False
-            if done == False:
-                for z in spec_obs['Z_SN'].values:
-                    if z >0:
-                        dlr1s['SPECZ'].iloc[i] = z
-                        print (dlr1s['TRANSIENT_NAME'].iloc[i])
-                        print ('Added z of %s from SN to %s'%(z,sn))
-                        done=True
-                        break
-    if fz:
-        force_redshifts = np.loadtxt(fz,dtype='str')
-        print (force_redshifts)
-        for counter,sn in enumerate(force_redshifts[:,0]):
-            print(counter, sn)
-            snloc = dlr1s[dlr1s['TRANSIENT_NAME']==sn].index
-            dlr1s['SPECZ'].loc[snloc] = float(force_redshifts[counter,1])
-            print ('Forced z of %s for %s as requested'%(force_redshifts[counter,1],sn))
+    #snspect = pd.read_csv('/media/data3/wiseman/des/coadding/catalogs/snspect.csv',index_col=0)
+    dlr1s.drop_duplicates(subset=['SNID'],keep='first',inplace=True)
     if ml ==True:
-        miika_class = pd.read_csv('f/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_plot_final.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Est','Per 0','Per 1'])
+        miika_class = pd.read_csv('/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_plot_final.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Est','Per 0','Per 1'])
         miika_testset = pd.read_csv('/media/data1/pursiainen/agn_sn_classifier_all_des/31_agn_transient_train-and-test.dat',sep='\t',skiprows=5,names=['TRANSIENT_NAME','Typ','Est','Per 0','Per 1'])
         miika_class = miika_class.append(miika_testset)
         galaxies = plot_host_cmd(dlr1s,miika_class,plot=False)
@@ -172,10 +142,10 @@ def prep_cigale_data(name_df = None,sn_name_fn='/home/wiseman/code/des_stacks/so
         allgals = dlr1s[dlr1s['SPECZ']>0]
     allgals = allgals[['TRANSIENT_NAME','SPECZ','Y_IMAGE',
                        'RA','DEC',
-                       'MAG_AUTO_G','MAGERR_AUTO_G',
-                       'MAG_AUTO_R','MAGERR_AUTO_R',
-                       'MAG_AUTO_I','MAGERR_AUTO_I',
-                       'MAG_AUTO_Z','MAGERR_AUTO_Z',
+                       'MAG_AUTO_G','MAGERR_STATSYST_AUTO_G',
+                       'MAG_AUTO_R','MAGERR_STATSYST_AUTO_R',
+                       'MAG_AUTO_I','MAGERR_STATSYST_AUTO_I',
+                       'MAG_AUTO_Z','MAGERR_STATSYST_AUTO_Z',
                        'FLUX_AUTO_G','FLUXERR_AUTO_G',
                        'FLUX_AUTO_R','FLUXERR_AUTO_R',
                        'FLUX_AUTO_I','FLUXERR_AUTO_I',
